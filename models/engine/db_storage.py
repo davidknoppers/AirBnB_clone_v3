@@ -63,11 +63,11 @@ class DBStorage:
         """
         #if class is valid, set up a sqlalchemy query to return count
         if cls:
-            if cls in self.__models_available.keys():
+            if cls not in self.__models_available.keys():
+                return None
+            else:
                 cls_name = self.__models_available[cls]
                 return (self.__session.query(cls_name).count())
-            else:
-                return None
         #return length of all if no class was passed
         return (len(self.all()))
 
@@ -75,6 +75,8 @@ class DBStorage:
         """
         returns object based on class name and its ID
         """
+        if cls not in self.__models_available.keys():
+            return None
         cls_name = self.__models_available[cls]
         return (self.__session.query(cls_name).get(_id))
 

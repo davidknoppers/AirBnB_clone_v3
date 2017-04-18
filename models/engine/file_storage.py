@@ -3,7 +3,7 @@
 This is module file_storage
 
 This module defines one class FileStorage.
-This class hadles saving the information in json in a file
+This class handles saving the information in json in a file
 """
 import json
 from datetime import datetime
@@ -67,6 +67,26 @@ class FileStorage:
         """
         if obj is not None:
             FileStorage.__objects[obj.id] = obj
+
+    def get(self, cls, _id):
+        """
+        Returns a queried object if found, or None
+        """
+        if cls not in self.__models_available:
+            return None
+        all_objects = self.all(cls)
+        if _id in all_objects.keys():
+            return all_objs[_id]
+
+    def count(self, cls=None):
+        """
+        Returns the number of objects in a class or a count of all objs
+        """
+        if cls is None:
+            return len(self.__objects)
+        if cls not in self.__models_available:
+            return None
+        return len(self.all(cls))
 
     def save(self):
         """puts all the object to file after serializing them"""
