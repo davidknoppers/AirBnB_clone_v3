@@ -57,9 +57,30 @@ class DBStorage:
         """
         self.__session.add(obj)
 
+    def count(self, cls=None):
+        """
+        returns count of a class if one is specified or just counts all objects
+        """
+        #if class is valid, set up a sqlalchemy query to return count
+        if cls:
+            if cls in self.__models_available.keys():
+                cls_name = self.__models_available[cls]
+                return (self.__session.query(cls_name).count())
+            else:
+                return None
+        #return length of all if no class was passed
+        return (len(self.all()))
+
+    def get(self, cls, _id):
+        """
+        returns object based on class name and its ID
+        """
+        cls_name = self.__models_available[cls]
+        return (self.__session.query(cls_name).get(_id))
+
     def save(self):
         """
-        saves the objects fom the current session
+        saves the objects from the current session
         """
         self.__session.commit()
 
@@ -76,7 +97,8 @@ class DBStorage:
         be in the init method
         """
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine))
+        self.__session = scoped_session(sessionmaker(bind=self.__engine,
+                                                     expire_on_commit=False))
 
     def close(self):
         """
