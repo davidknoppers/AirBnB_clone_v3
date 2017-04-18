@@ -17,7 +17,7 @@ class Test_DBStorage(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """create a session"""
-        # close previous connexion to same database
+        # close previous connection to same database
         storage._DBStorage__session.close()
         cls.store = DBStorage()
         test_args = {'updated_at': datetime(2017, 2, 12, 00, 31, 53, 331997),
@@ -68,6 +68,14 @@ class Test_DBStorage(unittest.TestCase):
         self.store.reload()
         for value in self.store.all().values():
             self.assertIsInstance(value.created_at, datetime)
+
+    def test_count(self):
+        #make sure count is correct both before and after adding an object
+        self.assertEqual(len(self.store.all()), self.store.count())
+        a = Amenity(name="thing")
+        a.save()
+        self.store.reload()
+        self.assertEqual(len(self.store.all()), self.store.count())
 
 if __name__ == "__main__":
     unittest.main()
