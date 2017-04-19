@@ -10,6 +10,6 @@ def status():
     return jsonify({'status': "Ok"})
 
 
-@app_views.route('/api/v1/stats')
+@app_views.route('/stats')
 def stats():
     return "storage.get"
