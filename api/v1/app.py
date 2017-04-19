@@ -3,7 +3,7 @@
 This module starts a rest api.
 """
 from api.v1.views import app_views
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 from models import storage
 
 
@@ -18,7 +18,7 @@ def store_close(exception=None):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return jsonify({'error': "Not found"})
+    return make_response(jsonify({'error': "Not found"}), 404)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
