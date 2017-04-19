@@ -21,10 +21,8 @@ def get_state():
 def get_a_state(state_id):
     """ Retrieves a State object based on given id """
     try:
-        states = storage.all("State")
-        for key, value in states.items():
-            if value.to_json().get('id') == state_id:
-                return jsonify(value.to_json())
+        state = storage.get("State", state_id)
+        return jsonify(state.to_json())
     except:
         abort(404)
 
@@ -32,11 +30,9 @@ def get_a_state(state_id):
 def del_state(state_id):
     """ Deletes a State object """
     try:
-        states = storage.all("State")
-        for key, value in states.items():
-            if value.to_json().get('id') == state_id:
-                storage.delete(state)
-                return jsonify({}), 200
+        state = storage.get("State", state_id)
+        storage.delete(state)
+        return jsonify({}), 200
     except:
         abort(404)
 
@@ -49,7 +45,7 @@ def create_state():
         return "Missing name", 400
     state = State(request.get_json())
     state.save()
-    return jsonify({'state': state}), 201
+    return jsonify(state.to_json()), 201
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
@@ -57,13 +53,11 @@ def update_state(state_id):
     if not request.get_json():
         return "Not a JSON", 400
     try:
-        states = storage.all("State")
-        for key, value in states.items():
-            if value.to_json().get('id') == state_id:
-                key_values = request.get_json()
-                for k, value in key_values.items():
-                    if k != "id" or k != "created_at" or k != "updated_at":
-                        value.to_json().get(k) = value
-                return jsonify({'state': state}), 200
+        state = storage.get("State", state_id).to_json()
+        key_values = request.get_json()
+        for k, v in key_values.items():
+            if k != "id" or k != "created_at" or k != "updated_at":
+                state[k] = v
+                return jsonify(state), 200
     except:
         abort(404)
