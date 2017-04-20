@@ -49,7 +49,7 @@ def delete_city(city_id):
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
                  strict_slashes=False)
 def create_city(state_id):
-    """ Creates a State """
+    """ Creates a City """
     if not request.get_json():
         return "Not a JSON", 400
     if not 'name' in request.get_json():
