@@ -67,7 +67,7 @@ class DBStorage:
 
     def get(self, cls, _id):
         """
-        returns object based on class name and its ID
+        returns object based on class name and ID
         """
         if cls not in self.__models_available.keys():
             return None
