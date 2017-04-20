@@ -13,7 +13,7 @@ def get_state():
     """ Retrieves the list of all State objects """
     all_states = storage.all("State")
     states = []
-    for key, value in all_states.items():
+    for value in all_states.values():
         states.append(value.to_json())
     return jsonify(states)
 
@@ -45,7 +45,8 @@ def create_state():
         return "Missing name", 400
     state = State(request.get_json())
     state.save()
-    return jsonify(state.to_json()), 201
+    new_state = storage.get("State", state.id)
+    return jsonify(new_state.to_json()), 201
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
@@ -54,10 +55,11 @@ def update_state(state_id):
         return "Not a JSON", 400
     try:
         state = storage.get("State", state_id).to_json()
+        skip_list = ["id", "created_at", "updated_at"]
         key_values = request.get_json()
         for k, v in key_values.items():
-            if k != "id" or k != "created_at" or k != "updated_at":
+            if k not in skip_list:
                 state[k] = v
-                return jsonify(state), 200
+        return jsonify(state), 200
     except:
         abort(404)
