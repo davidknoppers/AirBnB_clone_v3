@@ -92,7 +92,7 @@ class DBStorage:
         """
         if obj is not None:
             self.__session.delete(obj)
-
+            self.__session.commit()
     def reload(self):
         """
         WARNING!!!! I'm not sure if Base.metadata.create_all needs to
