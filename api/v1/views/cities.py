@@ -14,14 +14,16 @@ def get_all_cities(state_id):
     """ Retrieves the list of all City objects of a State """
     try:
         state = storage.get("State", state_id)
+        if state:
+            all_cities = []
+            cities = storage.all("City")
+            for v in cities.values():
+                if v.state_id == state_id:
+                    new_city = v.to_json()
+                    all_cities.append(new_city)
+            return jsonify(all_cities)
     except:
         abort(404)
-    all_cities = []
-    cities = storage.all("City")
-    for k, v in cities.items():
-        if v.state_id == state_id:
-            all_cities.append(v.to_json())
-    return jsonify(all_cities)
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
 def get_city(city_id):
@@ -54,25 +56,28 @@ def create_city(state_id):
         return "Missing name", 400
     try:
         state = storage.get("State", state_id)
+        if state:
+            city = request.get_json()
+            city["state_id"] = state_id
+            new_city = City(city)
+            new_city.save()
+            created_city = storage.get("City", new_city.id)
+            return jsonify(created_city.to_json()), 201
     except:
         abort(404)
-    city = request.get_json()
-    city["state_id"] = state_id
-    city = City(city)
-    city.save()
-    created_city = storage.get("City", city.id).to_json()
-    return jsonify(created_city), 201
 
-@app_views.route('cities/<city_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
     """ Updates a City object """
     if not request.get_json():
         return "Not a JSON", 400
     try:
-        city = storage.get("City", city_id).to_json()
+        skip_list = ["id", "created_at", "updated_at", "state_id"]
+        city = storage.get("City", city_id)
+        city = city.to_json()
         key_values = request.get_json()
         for k, v in key_values.items():
-            if k != "id" or k != "created_at" or k != "updated_at" or k != "state_id":
+            if k not in skip_list:
                 city[k] = v
         return jsonify(city), 200
     except:
