@@ -51,6 +51,29 @@ class DBStorage:
                         orm_objects[k.__dict__['id']] = k
         return orm_objects
 
+    def count(self, cls=None):
+        """
+        returns count of a class if one is specified or just counts all objects
+        """
+        #if class is valid, set up a sqlalchemy query to return count
+        if cls:
+            if cls not in self.__models_available.keys():
+                return None
+            else:
+                cls_name = self.__models_available[cls]
+                return (self.__session.query(cls_name).count())
+        #return length of all if no class was passed
+        return (len(self.all()))
+
+    def get(self, cls, _id):
+        """
+        returns object based on class name and its ID
+        """
+        if cls not in self.__models_available.keys():
+            return None
+        cls_name = self.__models_available[cls]
+        return (self.__session.query(cls_name).get(_id))
+
     def new(self, obj):
         """
         adds a new obj to the session
@@ -69,7 +92,7 @@ class DBStorage:
         """
         if obj is not None:
             self.__session.delete(obj)
-
+            self.__session.commit()
     def reload(self):
         """
         WARNING!!!! I'm not sure if Base.metadata.create_all needs to
