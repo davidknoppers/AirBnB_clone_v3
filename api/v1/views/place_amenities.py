@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from api.v1.views import app_views, Place, PlaceAmenity, storage
+from api.v1.views import app_views, Place, storage
 from flask import abort, jsonify, make_response, request
 from os import getenv
 from sqlalchemy import inspect
