@@ -1,84 +1,98 @@
 #!/usr/bin/python3
 from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
-
+from models import storage, Review
 """
 API functionality for Reviews. We can:
 Retrieve all Review objects for a given Place
 Retrieve/delete/create/update a single Review object
 
 """
-storage_type = os.getenv("HBNB_TYPE_STORAGE", "fs")
-if storage_type == "db":
-    from models import PlaceAmenity
-
 @app_views.route("/places/<place_id>/amenities", methods=['GET'],
                  strict_slashes=False)
 def get_all_reviews(place_id):
     """
-    Gets all available reviews if place works properly
+    Gets all available reviews if place exists
+    and has reviews
     """
-    review_output = []
-    all_reviews = storage.all("Review")
+    place = storage.get("Place", place_id)
+    if place is None:
+        abort(404)
+    reviews = []
+    for r in place.reviews:
+        reviews.append(r.to_json())
+    return(jsonify(reviews))
 @app_views.route("/reviews/<review_id>", methods=['GET'],
                   strict_slashes=False)
-def return_review(review_id):
+def single_review(review_id):
     """
     Attempts to retrieve and return
     a single review
     """
-    review = storage.get("Review", review_id).to_json()
+    review = storage.get("Review", review_id)
     if not review:
-        print("retrieval of review failed")
         abort(404)
-    return jsonify(review)
+    return jsonify(review.to_json())
 
 @app_views.route("/reviews/<review_id>", methods=['DELETE'],
                   strict_slashes=False)
-def del_review(review_id):
-    try:
-        review = storage.get("Review", review_id)
-        storage.delete(review)
-        storage.save()
-        return jsonify({})
-    except:
+def delete_review(review_id):
+    """
+    deletes a review from a place
+    """
+    review = storage.get("Review", review_id)
+    if not review:
         abort(404)
+    storage.delete(review)
+    storage.save()
+    return jsonify({}), 200
 
 @app_views.route("/places/<place_id>/reviews", methods=['POST'],
                   strict_slashes=False)
-def create_review():
-    review_dict = request.get_json()
+def create_review(place_id):
+    """
+    Creates a user review for a valid place
+    Requires a valid place_id and user_id
+    """
+    try:
+        review_dict = request.get_json()
+    except:
+        return "Not a JSON", 400
+    if not review_dict:
+        abort(404)
     if place_id not in review_dict:
         abort(404)
-    try:
-        place = storage.get("Place", place_id)
-    except:
-        abort(404)
-    if user_id not in review_dict:
+    if "user_id" not in review_dict.keys():
         return "Missing user_id", 400
-    try:
-        user = storage.get("User", user_id)
-    except:
-        abort(404)
-    if "text" not in review_data:
+    if "text" not in review_dict.keys():
         return "Missing text", 400
-    new_review = Review(review_data)
-    return jsonify(new_review.to_json())
-
+    place = storage.get("Place", place_id)
+    if not place:
+        abort(404)
+    user = storage.get("User", review_dict["user_id"])
+    if not user:
+        abort(404)
+    review = Review(**review_dict)
+    review.place_id = place_id
+    review.save()
+    return jsonify(review.to_json()), 201
 @app_views.route("/reviews/<review_id>", methods=['PUT'],
                   strict_slashes=False)
-def update_review():
+def update_review(review_id):
+    """
+    updates a review if place and attributes are valid
+    """
     ignore_keys = ["id", "user_id", "place_id", "created_at", "updated_at"]
-    try:
-        review_data = request.get_json()
-    except:
+
+    review = storage.get("Review", review_id)
+    if not review:
         abort(404)
     try:
-        review = storage.get("Review", review_id)
+        review_dict = request.get_json()
     except:
-        abort(404)
-    for key, value in review_data.items():
+        return "Not a JSON", 400
+    for key, value in review_dict.items():
         if key not in ignore_keys:
             setattr(review, key, value)
-        storage.save()
-    return jsonify(review.to_json())
+    storage.save()
+    return jsonify(review.to_json()), 200
