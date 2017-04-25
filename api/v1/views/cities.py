@@ -4,6 +4,7 @@ This module creates a new view for City objects that handles all default
 RestFul API actions, get, post, put, delete.
 """
 from api.v1.views import app_views
+from api.v1.views import page_not_found
 from flask import abort, jsonify, request
 from models import *
 
@@ -23,7 +24,7 @@ def get_all_cities(state_id):
                     all_cities.append(new_city)
             return jsonify(all_cities)
     except:
-        abort(404)
+        return(page_not_found(404))
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
@@ -35,7 +36,7 @@ def get_city(city_id):
         city = storage.get("City", city_id)
         return jsonify(city.to_json())
     except:
-        abort(404)
+        return(page_not_found(404))
 
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
@@ -46,7 +47,7 @@ def delete_city(city_id):
         storage.delete(city)
         return jsonify({}), 200
     except:
-        abort(404)
+        return(page_not_found(404))
 
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
@@ -54,9 +55,9 @@ def delete_city(city_id):
 def create_city(state_id):
     """ Creates a City """
     if not request.get_json():
-        return "Not a JSON", 400
+        return abort(400), "Not a JSON"
     if not 'name' in request.get_json():
-        return "Missing name", 400
+        return abort(400), "Missing name"
     try:
         state = storage.get("State", state_id)
         if state:
@@ -67,14 +68,14 @@ def create_city(state_id):
             created_city = storage.get("City", new_city.id)
             return jsonify(created_city.to_json()), 201
     except:
-        abort(404)
+        return(page_not_found(404))
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
     """ Updates a City object """
     if not request.get_json():
-        return "Not a JSON", 400
+        return abort(400), "Not a JSON"
     try:
         skip_list = ["id", "created_at", "updated_at", "state_id"]
         city = storage.get("City", city_id)
@@ -85,4 +86,4 @@ def update_city(city_id):
                 city[k] = v
         return jsonify(city), 200
     except:
-        abort(404)
+        return(page_not_found(404))
