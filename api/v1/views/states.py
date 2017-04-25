@@ -45,7 +45,7 @@ def del_state(state_id):
 def create_state():
     """ Creates a State """
     try:
-        content = request.get_json():
+        content = request.get_json()
         if "name" not in content:
             return "Missing name", 400
         state = State(content)
