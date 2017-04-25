@@ -58,6 +58,26 @@ class FileStorage:
                     result[k] = v
             return result
 
+    def get(self, cls, _id):
+        """
+        Returns a queried object if found, or None
+        """
+        if cls not in self.__models_available:
+            return None
+        all_objects = self.all(cls)
+        if _id in all_objects.keys():
+            return all_objects[_id]
+
+    def count(self, cls=None):
+        """
+        Returns the number of objects in a class or a count of all objs
+        """
+        if cls is None:
+            return len(self.__objects)
+        if cls not in self.__models_available:
+            return None
+        return len(self.all(cls))
+
     def new(self, obj):
         """
         Adds a new object to __objects
