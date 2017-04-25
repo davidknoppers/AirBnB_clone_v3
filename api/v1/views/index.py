@@ -23,7 +23,9 @@ def stats():
     """
     from models import storage
     models_available = ["User", "Amenity", "City", "Place", "Review", "State"]
+    formats = {"User": "users", "Amenity": "amenities", "City": "cities",
+               "Place": "places", "Review": "reviews", "State": "states"}
     output = {}
     for model in models_available:
-        output[model] = storage.count(model)
+        output[formats[model]] = storage.count(model)
     return jsonify(output)
