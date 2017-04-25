@@ -84,9 +84,9 @@ else:
                 storage.delete(amenity)
                 storage.save()
         return jsonify({}), 200
+
     @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                      methods=['POST'], strict_slashes=False)
-
     def create_amenity_fs(place_id=None, amenity_id=None):
         """link an amenity to a place"""
         place = storage.get("Place", place_id)
