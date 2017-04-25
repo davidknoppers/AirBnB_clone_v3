@@ -49,7 +49,7 @@ def create_amenity():
     """ Creates a Amenity """
     try:
         content = request.get_json()
-        if 'name' not in content:
+        if "name" not in content:
             return "Missing name", 400
         amenity = Amenity(content)
         amenity.save()
@@ -69,11 +69,10 @@ def update_amenity(amenity_id):
     try:
         skip_list = ["id", "created_at", "updated_at"]
         key_values = request.get_json()
+        amenity = amenity.to_json()
         for k, v in key_values.items():
             if k not in skip_list:
-                setattr(amenity, k, v)
-        amenity.save()
-        amenity = amenity.to_json()
+                amenity[k] = v
         return jsonify(amenity), 200
     except:
         return "Not a JSON", 400
