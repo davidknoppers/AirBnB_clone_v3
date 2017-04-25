@@ -62,25 +62,31 @@ else:
         place = storage.get("Place", place_id)
         if place is None:
             abort(404)
-        result = [storage.get("Amenity", i) for i in place.amenities]
-        return jsonify(result)
+        amenities = []
+        for amenity in place.amenities:
+            temp = storage.get("Amenity", amenity):
+            if temp:
+                amenities.append(temp)
+        return jsonify(amenities)
 
     @app_views.route('/places/<place_id>/amenities/<amenity_id>/',
                      methods=['DELETE'])
     def delete_placeamenity_fs(place_id=None, amenity_id=None):
         """delete an amenity within a place"""
-        place = storage.get("Place", place_id)
-        if place is None:
+        place_check = storage.get("Place", place_id)
+        amenity_check = storage.get("Amenity", amenity_id)
+        if not place_check:
             abort(404)
-        if amenity_id is not None:
-            for i in range(len(place.amenities)):
-                if place.amenity[i] == amenity_id:
-                    place.amenity.pop(i)
-                    place.save()
+        if not amenity_check:
+            abort(404)
+        for amenity in place.amenities:
+            if amenity == amenity_id:
+                storage.delete(amenity)
+                storage.save()
         return jsonify({}), 200
-
     @app_views.route('/places/<place_id>/amenities/<amenity_id>/',
                      methods=['POST'])
+
     def create_amenity_fs(place_id=None, amenity_id=None):
         """link an amenity to a place"""
         place = storage.get("Place", place_id)
