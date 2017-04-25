@@ -4,7 +4,7 @@ This module creates a new view for City objects that handles all default
 RestFul API actions, get, post, put, delete.
 """
 from api.v1.views import app_views
-from api.v1.views import page_not_found
+from api.v1.app import page_not_found
 from flask import abort, jsonify, request
 from models import *
 
