@@ -69,10 +69,11 @@ def update_amenity(amenity_id):
     try:
         skip_list = ["id", "created_at", "updated_at"]
         key_values = request.get_json()
-        amenity = amenity.to_json()
         for k, v in key_values.items():
             if k not in skip_list:
-                amenity[k] = v
+                setattr(amenity, k, v)
+        amenity.save()
+        amenity = amenity.to_json()
         return jsonify(amenity), 200
     except:
         return "Not a JSON", 400
