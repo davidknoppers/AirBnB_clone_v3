@@ -1,15 +1,16 @@
 #!/usr/bin/python3
-from api.v1.views import app_views, Place, storage
-from flask import abort, jsonify, make_response, request
-from os import getenv
-from sqlalchemy import inspect
-
 """
 Interacts with Place and Amenity depending on the storage type
 DBStorage: list, create and delete PlaceAmenity objects
 FileStorage: list, add and remove Amenity IDs in
 the list of amenities of a Place object
 """
+
+from api.v1.views import app_views, Place, storage
+from flask import abort, jsonify, make_response, request
+from os import getenv
+from sqlalchemy import inspect
+
 storage_type = getenv("HBNB_TYPE_STORAGE", "fs")
 if storage_type == "db":
     @app_views.route('/places/<place_id>/amenities', methods=['GET'],

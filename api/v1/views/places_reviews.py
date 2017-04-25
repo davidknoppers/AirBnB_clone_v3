@@ -1,13 +1,13 @@
 #!/usr/bin/python3
-from api.v1.views import app_views
-from flask import abort, jsonify, make_response, request
-from models import storage, Review
 """
 API functionality for Reviews. We can:
 Retrieve all Review objects for a given Place
 Retrieve/delete/create/update a single Review object
-
 """
+
+from api.v1.views import app_views
+from flask import abort, jsonify, make_response, request
+from models import storage, Review
 
 
 @app_views.route("/places/<place_id>/amenities", methods=['GET'],
