@@ -19,8 +19,8 @@ Where we are creating a command line interpretor to access objects that will sto
 ----------------------------------------
 
 **Authors**
-- **David Knoppers**, \<philip.yoo@holbertonschool.com>, @dxknoppers
-- **Swati Gupta**, \<philip.yoo@holbertonschool.com>, @sgupta1505
+- **David Knoppers**, \<david.knoppers@holbertonschool.com>, @dxknoppers
+- **Swati Gupta**, \<swati.gupta@holbertonschool.com>, @sgupta1505
 - **Philip Yoo**, \<philip.yoo@holbertonschool.com>, @philipYoo10
 - **Jianqin Wang**, \<jianqin.wang@holbertonschool.com>, @jianqinwang94
 - **Anne Cognet**, \<anne.cognet@holbertonschool.com>, @1million40
