@@ -35,6 +35,7 @@ def del_state(state_id):
     try:
         state = storage.get("State", state_id)
         storage.delete(state)
+        storage.save()
         return jsonify({}), 200
     except:
         abort(404)
@@ -43,28 +44,31 @@ def del_state(state_id):
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     """ Creates a State """
-    if not request.get_json():
+    try:
+        content = request.get_json():
+        if "name" not in content:
+            return "Missing name", 400
+        state = State(content)
+        state.save()
+        new_state = storage.get("State", state.id)
+        return jsonify(new_state.to_json()), 201
+    except:
         return "Not a JSON", 400
-    if not 'name' in request.get_json():
-        return "Missing name", 400
-    state = State(request.get_json())
-    state.save()
-    new_state = storage.get("State", state.id)
-    return jsonify(new_state.to_json()), 201
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
     """ Updates a State objec """
-    if not request.get_json():
-        return "Not a JSON", 400
+    state = storage.get("State", state_id).to_json()
+    if state is None:
+        abort(404)
     try:
-        state = storage.get("State", state_id).to_json()
         skip_list = ["id", "created_at", "updated_at"]
         key_values = request.get_json()
+        state = state.to_json()
         for k, v in key_values.items():
             if k not in skip_list:
                 state[k] = v
         return jsonify(state), 200
     except:
-        abort(404)
+        return "Not a JSON", 400
