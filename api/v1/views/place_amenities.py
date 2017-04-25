@@ -64,9 +64,7 @@ else:
             abort(404)
         amenities = []
         for amenity in place.amenities:
-            temp = storage.get("Amenity", amenity):
-            if temp:
-                amenities.append(temp)
+                amenities.append(amenity)
         return jsonify(amenities)
 
     @app_views.route('/places/<place_id>/amenities/<amenity_id>/',
