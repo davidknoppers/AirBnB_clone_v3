@@ -8,7 +8,8 @@ from flask import abort, jsonify, request
 from models import *
 
 
-@app_views.route('/cities/<city_id>/places', methods=['GET'], strict_slashes=False)
+@app_views.route('/cities/<city_id>/places', methods=['GET'],
+                 strict_slashes=False)
 def get_all_place(city_id):
     """ Retrieves the list of all Place objects of a City """
     try:
@@ -23,6 +24,7 @@ def get_all_place(city_id):
     except:
         abort(404)
 
+
 @app_views.route('/places/<place_id>', methods=['GET'],
                  strict_slashes=False)
 def get_a_place(place_id):
@@ -32,6 +34,7 @@ def get_a_place(place_id):
         return jsonify(place.to_json())
     except:
         abort(404)
+
 
 @app_views.route('/places/<place_id>', methods=['DELETE'],
                  strict_slashes=False)
@@ -43,6 +46,7 @@ def delete_place(place_id):
         return jsonify({}), 200
     except:
         abort(404)
+
 
 @app_views.route('/cities/<city_id>/places', methods=['POST'],
                  strict_slashes=False)
@@ -65,9 +69,10 @@ def create_place(city_id):
             new_place = Place(place)
             new_place.save()
             created_place = storage.get("Place", new_place.id)
-            return  jsonify(created_place.to_json()), 201
+            return jsonify(created_place.to_json()), 201
     except:
         abort(404)
+
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
                  strict_slashes=False)

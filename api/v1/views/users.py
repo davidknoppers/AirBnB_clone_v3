@@ -17,6 +17,7 @@ def get_all_user():
         users.append(value.to_json())
     return jsonify(users)
 
+
 @app_views.route('/users/<user_id>', methods=['GET'],
                  strict_slashes=False)
 def get_a_user(user_id):
@@ -26,6 +27,7 @@ def get_a_user(user_id):
         return jsonify(user.to_json())
     except:
         abort(404)
+
 
 @app_views.route('/users/<user_id>', methods=['DELETE'],
                  strict_slashes=False)
@@ -37,6 +39,7 @@ def delete_user(user_id):
         return jsonify({}), 200
     except:
         abort(404)
+
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
@@ -50,7 +53,8 @@ def create_user():
     user = User(request.get_json())
     user.save()
     new_user = storage.get("User", user.id)
-    return  jsonify(new_user.to_json()), 201
+    return jsonify(new_user.to_json()), 201
+
 
 @app_views.route('/users/<user_id>', methods=['PUT'],
                  strict_slashes=False)

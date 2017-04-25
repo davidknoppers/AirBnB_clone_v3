@@ -8,6 +8,8 @@ Retrieve all Review objects for a given Place
 Retrieve/delete/create/update a single Review object
 
 """
+
+
 @app_views.route("/places/<place_id>/amenities", methods=['GET'],
                  strict_slashes=False)
 def get_all_reviews(place_id):
@@ -22,8 +24,10 @@ def get_all_reviews(place_id):
     for r in place.reviews:
         reviews.append(r.to_json())
     return(jsonify(reviews))
+
+
 @app_views.route("/reviews/<review_id>", methods=['GET'],
-                  strict_slashes=False)
+                 strict_slashes=False)
 def single_review(review_id):
     """
     Attempts to retrieve and return
@@ -34,8 +38,9 @@ def single_review(review_id):
         abort(404)
     return jsonify(review.to_json())
 
+
 @app_views.route("/reviews/<review_id>", methods=['DELETE'],
-                  strict_slashes=False)
+                 strict_slashes=False)
 def delete_review(review_id):
     """
     deletes a review from a place
@@ -47,8 +52,9 @@ def delete_review(review_id):
     storage.save()
     return jsonify({}), 200
 
+
 @app_views.route("/places/<place_id>/reviews", methods=['POST'],
-                  strict_slashes=False)
+                 strict_slashes=False)
 def create_review(place_id):
     """
     Creates a user review for a valid place
@@ -76,8 +82,10 @@ def create_review(place_id):
     review.place_id = place_id
     review.save()
     return jsonify(review.to_json()), 201
+
+
 @app_views.route("/reviews/<review_id>", methods=['PUT'],
-                  strict_slashes=False)
+                 strict_slashes=False)
 def update_review(review_id):
     """
     updates a review if place and attributes are valid

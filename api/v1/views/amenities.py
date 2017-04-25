@@ -17,6 +17,7 @@ def get_all_amenity():
         amenities.append(value.to_json())
     return jsonify(amenities)
 
+
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
                  strict_slashes=False)
 def get_a_amenity(amenity_id):
@@ -26,6 +27,7 @@ def get_a_amenity(amenity_id):
         return jsonify(amenity.to_json())
     except:
         abort(404)
+
 
 @app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
                  strict_slashes=False)
@@ -38,6 +40,7 @@ def delete_amenity(amenity_id):
     except:
         abort(404)
 
+
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def create_amenity():
     """ Creates a Amenity """
@@ -48,7 +51,8 @@ def create_amenity():
     amenity = Amenity(request.get_json())
     amenity.save()
     new_amenity = storage.get("Amenity", amenity.id)
-    return  jsonify(new_amenity.to_json()), 201
+    return jsonify(new_amenity.to_json()), 201
+
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'],
                  strict_slashes=False)

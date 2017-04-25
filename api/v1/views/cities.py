@@ -25,6 +25,7 @@ def get_all_cities(state_id):
     except:
         abort(404)
 
+
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
 def get_city(city_id):
     """
@@ -36,6 +37,7 @@ def get_city(city_id):
     except:
         abort(404)
 
+
 @app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
 def delete_city(city_id):
     """ Deletes a City object """
@@ -45,6 +47,7 @@ def delete_city(city_id):
         return jsonify({}), 200
     except:
         abort(404)
+
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
                  strict_slashes=False)
@@ -65,6 +68,7 @@ def create_city(state_id):
             return jsonify(created_city.to_json()), 201
     except:
         abort(404)
+
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
