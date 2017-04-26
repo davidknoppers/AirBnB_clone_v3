@@ -46,7 +46,7 @@ def create_state():
         return "Not a JSON", 400
     elif content.get("name") is None:
         return "Not a JSON", 400
-    new_state = State(name=content['name'])
+    new_state = state.State(name=content['name'])
     storage.new(new_state)
     storage.save()
     return jsonify(new_state.to_json()), 201
