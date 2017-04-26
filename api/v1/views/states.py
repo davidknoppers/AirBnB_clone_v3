@@ -41,6 +41,7 @@ def del_state(state_id=None):
     storage.delete(state)
     return jsonify({}), 200
 
+
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     """ Creates a State """
