@@ -23,27 +23,21 @@ def get_all_user():
                  strict_slashes=False)
 def get_a_user(user_id):
     """ Retrieves a User object, based on id """
-    if user_id is None:
+    user = storage.get("User", user_id)
+    if user is None:
         abort(404)
-    try:
-        user = storage.get("User", user_id)
-        return jsonify(user.to_json())
-    except:
-        abort(404)
+    return jsonify(user.to_json())
 
 
 @app_views.route('/users/<user_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_user(user_id):
     """ Deletes a User object """
-    if user_id is None:
+    user = storage.get("User", user_id)
+    if user is None:
         abort(404)
-    try:
-        user = storage.get("User", user_id)
-        storage.delete(user)
-        return jsonify({}), 200
-    except:
-        abort(404)
+    storage.delete(user)
+    return jsonify({}), 200
 
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
@@ -64,18 +58,16 @@ def create_user():
 @app_views.route('/users/<user_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_user(user_id):
-    """ Updates a User """
-    if user_id is None:
+    """ Updates a User  """
+    user = storage.get("User", user_id)
+    if user is None:
         abort(404)
     if not request.get_json():
         return "Not a JSON", 400
-    try:
-        user = storage.get("User", user_id).to_json()
-        skip_list = ["id", "email", "created_at", "updated_at"]
-        key_values = request.get_json()
-        for k, v in key_values.items():
-            if k not in skip_list:
-                user[k] = v
-        return jsonify(user), 200
-    except:
-        abort(404)
+    skip_list = ["id", "email", "created_at", "updated_at"]
+    key_values = request.get_json()
+    user = user.to_json()
+    for k, v in key_values.items():
+        if k not in skip_list:
+            user[k] = v
+    return jsonify(user)
