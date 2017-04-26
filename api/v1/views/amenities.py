@@ -62,13 +62,9 @@ def update_amenity(amenity_id):
     amenity = storage.get("Amenity", amenity_id)
     if amenity is None:
         abort(404)
-    try:
-        skip_list = ["id", "created_at", "updated_at"]
-        key_values = request.get_json()
-        amenity = amenity.to_json()
-        for k, v in key_values.items():
-            if k not in skip_list:
-                amenity[k] = v
-        return jsonify(amenity), 200
-    except:
+    content = request.get_json()
+    if content is None:
         return "Not a JSON", 400
+    amenity.name = content.get('name', amenity.name)
+    amenity.save()
+    return jsonify(amenity.to_json())
