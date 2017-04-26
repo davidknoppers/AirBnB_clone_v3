@@ -48,10 +48,11 @@ def create_state():
     content = request.get_json()
     if content is None:
         return "Not a JSON", 400
-    if 'name' not in content.keys():
-        return "Missing name", 400
-    state = State(**content)
-    state.save()
+    elif content.get("name") is None:
+        return "Not a JSON", 400
+    new_state = State(name=content['name'])
+    storage.new(new_state)
+    storage.save()
     return jsonify(new_state.to_json()), 201
 
 
