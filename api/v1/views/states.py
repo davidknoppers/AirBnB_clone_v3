@@ -67,7 +67,7 @@ def update_state(state_id=None):
     state = storage.get("State", state_id)
     if state is None:
         abort(404)
-    for i in ("id", "created_at", "updated_at"):
+    for i in ["id", "created_at", "updated_at"]:
         r.pop(i, None)
     for key, value in r.items():
         setattr(state, key, value)
