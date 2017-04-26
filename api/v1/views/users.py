@@ -5,7 +5,8 @@ RestFul API actions, get, post, put and delete.
 """
 from api.v1.views import app_views
 from flask import abort, jsonify, request
-from models import *
+from models import storage
+from models.user import User
 
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
@@ -22,6 +23,8 @@ def get_all_user():
                  strict_slashes=False)
 def get_a_user(user_id):
     """ Retrieves a User object, based on id """
+    if user_id is None:
+        abort(404)
     try:
         user = storage.get("User", user_id)
         return jsonify(user.to_json())
@@ -33,6 +36,8 @@ def get_a_user(user_id):
                  strict_slashes=False)
 def delete_user(user_id):
     """ Deletes a User object """
+    if user_id is None:
+        abort(404)
     try:
         user = storage.get("User", user_id)
         storage.delete(user)
@@ -60,6 +65,8 @@ def create_user():
                  strict_slashes=False)
 def update_user(user_id):
     """ Updates a User """
+    if user_id is None:
+        abort(404)
     if not request.get_json():
         return "Not a JSON", 400
     try:
