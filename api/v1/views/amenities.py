@@ -5,7 +5,8 @@ RestFul API actions, get, post, put and delete.
 """
 from api.v1.views import app_views
 from flask import abort, jsonify, request
-from models import *
+from models import storage
+from models.amenity import Amenity
 
 
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
@@ -20,12 +21,12 @@ def get_all_amenity():
 
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
                  strict_slashes=False)
-def get_a_amenity(amenity_id):
+def get_an_amenity(amenity_id):
     """ Retrieves a Amenity object, based on id """
-    try:
-        amenity = storage.get("Amenity", amenity_id)
+    amenity = storage.get("Amenity", amenity_id)
+    if amenity is not None:
         return jsonify(amenity.to_json())
-    except:
+    else:
         abort(404)
 
 
@@ -36,12 +37,8 @@ def delete_amenity(amenity_id):
     amenity = storage.get("Amenity", amenity_id)
     if amenity is None:
         abort(404)
-    try:
-        storage.delete(amenity)
-        storage.save()
-        return jsonify({}), 200
-    except:
-        abort(404)
+    storage.delete(amenity)
+    return jsonify({})
 
 
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
