@@ -44,11 +44,11 @@ def delete_user(user_id):
 def create_user():
     """ Creates a User """
     if not request.get_json():
-        return "Not a JSON", 400
+        abort(400, "Not a JSON")
     if not 'email' in request.get_json():
-        return "Missing email", 400
+        abort(400, "Missing email")
     if not 'password' in request.get_json():
-        return "Missing password", 400
+        abort(400, "Missing password")
     user = User(request.get_json())
     user.save()
     new_user = storage.get("User", user.id)
@@ -63,7 +63,7 @@ def update_user(user_id):
     if user is None:
         abort(404)
     if not request.get_json():
-        return "Not a JSON", 400
+        abort(400, "Not a JSON")
     skip_list = ["id", "email", "created_at", "updated_at"]
     key_values = request.get_json()
     user = user.to_json()
