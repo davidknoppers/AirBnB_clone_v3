@@ -44,16 +44,15 @@ def delete_amenity(amenity_id):
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def create_amenity():
     """ Creates a Amenity """
-    try:
-        content = request.get_json()
-        if "name" not in content:
-            return "Missing name", 400
-        amenity = Amenity(content)
-        amenity.save()
-        new_amenity = storage.get("Amenity", amenity.id)
-        return jsonify(new_amenity.to_json()), 201
-    except:
+    content = request.get_json()
+    if content is None:
         return "Not a JSON", 400
+    if "name" not in content:
+        return "Missing name", 400
+    new_amenity = Amenity(name=content.get('name'))
+    storage.new(new_amenity)
+    storage.save()
+    return jsonify(new_amenity.to_json()), 201
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'],
