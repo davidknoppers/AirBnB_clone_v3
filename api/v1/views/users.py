@@ -59,15 +59,14 @@ def create_user():
                  strict_slashes=False)
 def update_user(user_id):
     """ Updates a User  """
+    r = request.get_json()
+    if not r:
+        abort(400, "Not a JSON")
     user = storage.get("User", user_id)
     if user is None:
         abort(404)
-    if not request.get_json():
-        abort(400, "Not a JSON")
-    skip_list = ["id", "email", "created_at", "updated_at"]
-    key_values = request.get_json()
-    user = user.to_json()
-    for k, v in key_values.items():
-        if k not in skip_list:
-            user[k] = v
-    return jsonify(user)
+    user.first_name = r.get('first_name', user.first_name)
+    user.last_name = r.get('last_name', user.last_name)
+    user.password = r.get('password', user.password)
+    user.save()
+    return jsonify(user.to_json())
