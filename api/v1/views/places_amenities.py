@@ -6,10 +6,12 @@ FileStorage: list, add and remove Amenity IDs in
 the list of amenities of a Place object
 """
 
+
 from api.v1.views import app_views, Place, storage
 from flask import abort, jsonify, make_response, request
 from os import getenv
 from sqlalchemy import inspect
+
 
 storage_type = getenv("HBNB_TYPE_STORAGE", "fs")
 if storage_type == "db":
@@ -45,10 +47,10 @@ if storage_type == "db":
         """links an amenity to a place"""
         place = storage.get("Place", place_id)
         if place is None:
-            return "Bad place", 404
+            abort(404, "Bad place")
         amenity = storage.get("Amenity", amenity_id)
         if amenity is None:
-            return "Bad amenity", 404
+            abort(404, "Bad amenity")
         if amenity in place.amenities:
             return jsonify(amenity.to_json()), 200
         place.amenities.append(amenity)
@@ -95,7 +97,7 @@ else:
             abort(404)
         amenity = storage.get("Amenity", amenity_id)
         if amenity is None:
-            return "Bad amenity", 404
+            abort(404, "Bad amenity")
         for amenity in place.amenities:
             """
             if item already exists, return it
