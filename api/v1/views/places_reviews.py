@@ -46,7 +46,7 @@ def delete_review(review_id):
     deletes a review from a place
     """
     review = storage.get("Review", review_id)
-    if not review:
+    if review is None:
         abort(404)
     storage.delete(review)
     storage.save()
@@ -60,12 +60,9 @@ def create_review(place_id):
     Creates a user review for a valid place
     Requires a valid place_id and user_id
     """
-    try:
-        review_dict = request.get_json()
-    except:
+    review_dict = request.get_json()
+    if review_dict is None:
         return "Not a JSON", 400
-    if not review_dict:
-        abort(404)
     if place_id not in review_dict:
         abort(404)
     if "user_id" not in review_dict.keys():
